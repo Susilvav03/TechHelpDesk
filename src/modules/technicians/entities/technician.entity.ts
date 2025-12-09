@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Ticket } from '../../tickets/entities/ticket.entity';
 
 @Entity({ name: 'technicians' })
 export class Technician {
@@ -13,4 +14,7 @@ export class Technician {
 
   @Column({ default: true })
   availability: boolean;
+
+  @OneToMany(() => Ticket, (ticket) => ticket.technician)
+  tickets: Ticket[];
 }
