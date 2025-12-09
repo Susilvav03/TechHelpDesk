@@ -15,20 +15,30 @@ import { SeedModule } from './seed/seed.module';
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: 'postgres',
-        host: config.get<string>('DB_HOST'),
-        port: parseInt(config.get<string>('DB_PORT') ?? '5432', 10),
-        username: config.get<string>('DB_USER'),
-        password: config.get<string>('DB_PASS'),
-        database: config.get<string>('DB_NAME'),
-        autoLoadEntities: true,
-        synchronize: true, // para la prueba; en prod sería false + migrations
-      }),
+      useFactory: (config: ConfigService) => {
+        const isSsl = config.get<string>('DB_SSL') === 'true';
+
+        return {
+          type: 'postgres',
+          host: config.get<string>('DB_HOST'),
+          port: parseInt(config.get<string>('DB_PORT') ?? '5432', 10),
+          username: config.get<string>('DB_USER'),
+          password: config.get<string>('DB_PASS'),
+          database: config.get<string>('DB_NAME'),
+          autoLoadEntities: true,
+          synchronize: true,
+          ssl: isSsl
+            ? {
+                rejectUnauthorized: false,
+              }
+            : false,
+        };
+      },
     }),
+
     CommonModule,
-    UsersModule,
     AuthModule,
+    UsersModule,
     ClientsModule,
     TechniciansModule,
     CategoriesModule,

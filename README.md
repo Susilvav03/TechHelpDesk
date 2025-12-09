@@ -1,37 +1,66 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 **TechHelpDesk API**
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+TechHelpDesk is a modular support ticket management API built with **NestJS**, **TypeORM**, and **PostgreSQL**.
+It includes authentication, role-based access control, business rules, validations, Swagger documentation, and automatic seeding.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 📌 **Main Features**
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+* JWT-based authentication
+* Role-based authorization (`ADMIN`, `TECHNICIAN`, `CLIENT`)
+* CRUD operations for users, clients, technicians, and categories
+* Ticket system with business rules:
 
-## Project setup
+  * Valid status workflow:
+    `OPEN → IN_PROGRESS → RESOLVED → CLOSED`
+  * A technician cannot have more than **5 active IN_PROGRESS tickets**
+* Global validation with `class-validator`
+* Consistent API responses via a global interceptor
+* Global error handling
+* Auto-generated Swagger documentation
+* Automatic seeding on application startup
+
+---
+
+## 📁 **Project Structure**
+
+```
+src/
+ ├── common/
+ │    ├── decorators/      (Roles, Public, CurrentUser)
+ │    ├── guards/          (JwtAuthGuard, RolesGuard)
+ │    ├── filters/         (HttpExceptionFilter)
+ │    └── interceptors/    (TransformInterceptor)
+ │
+ ├── modules/
+ │    ├── auth/
+ │    ├── users/
+ │    ├── tickets/
+ │    ├── clients/
+ │    ├── technicians/
+ │    └── categories/
+ │
+ ├── seed/
+ │    ├── seed.module.ts
+ │    └── seed.service.ts
+ │
+ └── main.ts
+```
+---
+## 🛠️ Project setup
 
 ```bash
-$ pnpm install
+# clone the repository
+$ git clone https://github.com/Susilvav03/TechHelpDesk.git
+
+$ cd TechHelpDesk
+
+# install dependecies
+$ pnpm i
 ```
 
-## Compile and run the project
+### ▶️ Compile and run the project
 
 ```bash
 # development
@@ -44,7 +73,7 @@ $ pnpm run start:dev
 $ pnpm run start:prod
 ```
 
-## Run tests
+### ▶️ Run tests
 
 ```bash
 # unit tests
@@ -57,41 +86,265 @@ $ pnpm run test:e2e
 $ pnpm run test:cov
 ```
 
-## Deployment
+---
+## ⚙️ **Environment Variables (`.env`)**
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Create a `.env` file at the project root:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```env
+PORT=3000
 
-```bash
-$ pnpm install -g @nestjs/mau
-$ mau deploy
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=tech_helpdesk
+DB_USER=postgres
+DB_PASS=postgres
+
+# Required for Render
+DB_SSL=true
+
+JWT_SECRET=super_secret_key
+JWT_EXPIRES_IN=3600s
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+When using Render’s PostgreSQL, replace:
 
-## Resources
+* `DB_HOST`
+* `DB_USER`
+* `DB_PASS`
+* `DB_NAME`
 
-Check out a few resources that may come in handy when working with NestJS:
+with the credentials provided by Render.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+API Base URL:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+http://localhost:3000/api
+```
+
+Swagger Documentation:
+
+```
+http://localhost:3000/api/docs
+```
+
+---
+## 🌱 **Automatic Database Seeding**
+
+On every application startup:
+
+* If **no users exist**, the following are created:
+
+  * Default admin (`admin@techhelpdesk.com`, password: `admin123`)
+  * Default categories
+  * Demo client
+  * Demo technician
+
+To reset manually:
+
+```sql
+DELETE FROM users;
+DELETE FROM categories;
+DELETE FROM clients;
+DELETE FROM technicians;
+```
+
+Restart the server afterwards.
+
+---
+## 🔐 **Authentication**
+
+### Login Endpoint
+
+```
+POST /auth/login
+```
+
+Body:
+
+```json
+{
+  "email": "admin@techhelpdesk.com",
+  "password": "admin123"
+}
+```
+
+Response:
+
+```json
+{
+  "success": true,
+  "data": {
+    "accessToken": "..."
+  },
+  "message": null
+}
+```
+
+### Using JWT in Swagger
+
+Click **Authorize** → enter:
+
+```
+Bearer YOUR_TOKEN
+```
+
+---
+
+# 👥 **User Roles**
+
+| Role           | Capabilities                                                            |
+| -------------- | ----------------------------------------------------------------------- |
+| **ADMIN**      | Full CRUD on users, clients, technicians, categories. View all tickets. |
+| **CLIENT**     | Create tickets and view own ticket history.                             |
+| **TECHNICIAN** | View assigned tickets and update status.                                |
+
+---
+
+# 📝 **Main Endpoints**
+
+## Auth
+
+| Method | Endpoint      | Description                 |
+| ------ | ------------- | --------------------------- |
+| POST   | `/auth/login` | Authenticate and obtain JWT |
+
+---
+
+## Users (ADMIN only)
+
+| Method | Endpoint     |
+| ------ | ------------ |
+| POST   | `/users`     |
+| GET    | `/users`     |
+| GET    | `/users/:id` |
+| PATCH  | `/users/:id` |
+| DELETE | `/users/:id` |
+
+---
+
+## Clients (ADMIN only)
+
+| Method | Endpoint       |
+| ------ | -------------- |
+| POST   | `/clients`     |
+| GET    | `/clients`     |
+| GET    | `/clients/:id` |
+| PATCH  | `/clients/:id` |
+| DELETE | `/clients/:id` |
+
+---
+
+## Technicians (ADMIN only)
+
+| Method | Endpoint           |
+| ------ | ------------------ |
+| POST   | `/technicians`     |
+| GET    | `/technicians`     |
+| GET    | `/technicians/:id` |
+| PATCH  | `/technicians/:id` |
+| DELETE | `/technicians/:id` |
+
+---
+
+## Categories (ADMIN only)
+
+| Method | Endpoint          |
+| ------ | ----------------- |
+| POST   | `/categories`     |
+| GET    | `/categories`     |
+| GET    | `/categories/:id` |
+| PATCH  | `/categories/:id` |
+| DELETE | `/categories/:id` |
+
+---
+
+## 🎫 Tickets
+
+| Method | Endpoint                  | Role             |
+| ------ | ------------------------- | ---------------- |
+| POST   | `/tickets`                | CLIENT/ADMIN     |
+| GET    | `/tickets`                | ADMIN            |
+| GET    | `/tickets/:id`            | CLIENT/ADMIN     |
+| GET    | `/tickets/client/:id`     | CLIENT/ADMIN     |
+| GET    | `/tickets/technician/:id` | TECHNICIAN/ADMIN |
+| PATCH  | `/tickets/:id/status`     | TECHNICIAN/ADMIN |
+
+### Business Rules
+
+* Valid workflow:
+
+  ```
+  OPEN → IN_PROGRESS → RESOLVED → CLOSED
+  ```
+* A technician cannot exceed **5 simultaneous IN_PROGRESS tickets**
+* On creation:
+
+  * Category must exist
+  * Client must exist
+  * Technician (if provided) must exist and have capacity
+
+---
+
+## 📘 **Swagger Documentation**
+
+Available at:
+
+```
+http://localhost:3000/api/docs
+```
+
+Includes:
+
+* `@ApiTags`
+* `@ApiOperation`
+* `@ApiBearerAuth`
+
+---
+
+## 🧪 **Testing (Jest)**
+
+Includes tests such as:
+
+* Ticket creation
+* Invalid status transitions
+* Technician capacity validation
+
+Run tests:
+
+```bash
+pnpm test
+```
+
+---
+
+## 🐳 **Docker Support**
+
+### Build the image:
+
+```bash
+docker build -t techhelpdesk .
+```
+
+### Run with Docker Compose:
+
+```bash
+docker compose up --build
+```
+
+Services:
+
+* API → `http://localhost:3000`
+* PostgreSQL DB → port `5432`
+
+---
 
 ## Stay in touch
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- Author - [Susana Silva Vallejo](https://github.com/Susilvav03)
+- Clan - Ubuntu
 
 ## License
 
