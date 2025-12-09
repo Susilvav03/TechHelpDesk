@@ -9,6 +9,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 // import { TechniciansModule } from './modules/technicians/technicians.module';
 import { CommonModule } from './common/common.module'
 import { UsersModule } from './modules/users/users.module';
+import { AuthModule } from './modules/auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { UsersModule } from './modules/users/users.module';
     }),
     CommonModule,
     UsersModule,
+    AuthModule,
     // UsersModule,
     // AuthModule,
     // TicketsModule,
