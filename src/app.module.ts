@@ -3,12 +3,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 // import { TicketsModule } from './modules/tickets/tickets.module';
 // import { CategoriesModule } from './modules/categories/categories.module';
-// import { TechniciansModule } from './modules/technicians/technicians.module';
 import { CommonModule } from './common/common.module'
 import { UsersModule } from './modules/users/users.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { ClientsModule } from './modules/clients/clients.module';
 import { TechniciansModule } from './modules/technicians/technicians.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 
 @Module({
   imports: [
@@ -31,9 +31,9 @@ import { TechniciansModule } from './modules/technicians/technicians.module';
     AuthModule,
     ClientsModule,
     TechniciansModule,
+    CategoriesModule,
     // TicketsModule,
     // CategoriesModule,
-    // TechniciansModule,
   ],
 })
 export class AppModule {}
