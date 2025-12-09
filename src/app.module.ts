@@ -8,6 +8,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ClientsModule } from './modules/clients/clients.module';
 import { TechniciansModule } from './modules/technicians/technicians.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { TicketsModule } from './modules/tickets/tickets.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
     ClientsModule,
     TechniciansModule,
     CategoriesModule,
+    TicketsModule,
     // TicketsModule,
   ],
 })
