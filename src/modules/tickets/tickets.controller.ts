@@ -6,7 +6,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { TicketsService } from './tickets.service';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -18,44 +18,54 @@ import { UpdateTicketStatusDto } from './dto/update-ticket-status.dto';
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
-  // Cliente crea tickets
-  @Roles('CLIENT')
+  // Client creates ticket
+  @Roles('CLIENT', 'ADMIN')
   @Post()
+  @ApiOperation({ summary: 'Create a new ticket' })
   create(@Body() dto: CreateTicketDto) {
     return this.ticketsService.create(dto);
   }
 
-  // Admin ve todos
+  // Admin sees all tickets
   @Roles('ADMIN')
   @Get()
+  @ApiOperation({ summary: 'Get all tickets' })
   findAll() {
     return this.ticketsService.findAll();
   }
 
-  // Cliente busca por id (uso de @Param @Get(':id'))
-  @Roles('CLIENT')
+  // Client searches by id (use of @Param @Get(':id'))
+  @Roles('CLIENT', 'ADMIN')
   @Get(':id')
+  @ApiOperation({ summary: 'Get a ticket by ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the ticket' })
   findOne(@Param('id') id: string) {
     return this.ticketsService.findOne(id);
   }
 
-  // Historial por cliente
+  // History by client
   @Roles('CLIENT', 'ADMIN')
   @Get('client/:id')
+  @ApiOperation({ summary: 'Get tickets by client ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the client' })
   findByClient(@Param('id') clientId: string) {
     return this.ticketsService.findByClient(clientId);
   }
 
-  // Listar por técnico
+  // List by technician
   @Roles('TECHNICIAN', 'ADMIN')
   @Get('technician/:id')
+  @ApiOperation({ summary: 'Get tickets by technician ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the technician' })
   findByTechnician(@Param('id') technicianId: string) {
     return this.ticketsService.findByTechnician(technicianId);
   }
 
-  // Cambio de estado (solo técnico o admin)
+  // Change status (only technician or admin)
   @Roles('TECHNICIAN', 'ADMIN')
   @Patch(':id/status')
+  @ApiOperation({ summary: 'Update ticket status by ID' })
+  @ApiParam({ name: 'id', description: 'UUID of the ticket' })
   updateStatus(
     @Param('id') id: string,
     @Body() dto: UpdateTicketStatusDto,

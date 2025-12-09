@@ -4,6 +4,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor';
 import { HttpExceptionFilter } from './common/filters/http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -23,7 +24,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('TechHelpDesk API')
-    .setDescription('Sistema de soporte técnico (tickets)')
+    .setDescription('Sistema de soporte técnico')
     .setVersion('1.0')
     .addBearerAuth()
     .build();
@@ -31,6 +32,14 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/docs', app, document);
 
-  await app.listen(process.env.PORT || 3000);
+  const port = process.env.PORT || 3000;
+  await app.listen(port);
+
+  Logger.log(
+    `\n\n🚀 TechHelpDesk is running!\n\n` +
+    `🔗 API:       http://localhost:${port}/api\n` +
+    `📘 Swagger:   http://localhost:${port}/api/docs`,
+    'Bootstrap',
+  );
 }
 bootstrap();

@@ -1,0 +1,31 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:15
+    restart: always
+    environment:
+      POSTGRES_DB: tech_helpdesk
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  api:
+    build: .
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: tech_helpdesk
+      DB_USER: postgres
+      DB_PASS: postgres
+      JWT_SECRET: super_secret_key
+      JWT_EXPIRES_IN: 3600s
+    ports:
+      - "3000:3000"
+
+volumes:
+  db_data:

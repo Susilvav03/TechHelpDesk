@@ -1,4 +1,4 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../modules/users/entities/user.entity';
@@ -9,6 +9,8 @@ import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class SeedService implements OnModuleInit {
+  private readonly logger = new Logger(SeedService.name);
+
   constructor(
     @InjectRepository(User) private usersRepo: Repository<User>,
     @InjectRepository(Category) private categoriesRepo: Repository<Category>,
@@ -17,13 +19,19 @@ export class SeedService implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    this.logger.log('🔄 Executing database seed...');
     await this.seed();
+    this.logger.log('✅ Database seed completed');
   }
 
   private async seed() {
     const count = await this.usersRepo.count();
-    if (count > 0) return;
+    if (count > 0) {
+      this.logger.log('⏭ Seed skipped: users already exist in the database');
+      return;
+    }
 
+    this.logger.log('👤 Creating admin user...');
     const admin = this.usersRepo.create({
       name: 'Admin',
       email: 'admin@techhelpdesk.com',
@@ -33,23 +41,26 @@ export class SeedService implements OnModuleInit {
 
     await this.usersRepo.save(admin);
 
+    this.logger.log('📂 Creating base categories...');
     const categories = this.categoriesRepo.create([
-      { name: 'Solicitud', description: 'Requerimientos generales' },
-      { name: 'Incidente de Hardware', description: 'Problemas hardware' },
-      { name: 'Incidente de Software', description: 'Problemas software' },
+      { name: 'Request', description: 'General requirements' },
+      { name: 'Hardware Incident', description: 'Hardware issues' },
+      { name: 'Software Incident', description: 'Software issues' },
     ]);
     await this.categoriesRepo.save(categories);
 
+    this.logger.log('🏢 Creating demo client...');
     const client = this.clientsRepo.create({
-      name: 'Cliente Demo',
-      company: 'Empresa XYZ',
-      contactEmail: 'cliente@xyz.com',
+      name: 'Demo Client',
+      company: 'XYZ Company',
+      contactEmail: 'client@xyz.com',
     });
     await this.clientsRepo.save(client);
 
+    this.logger.log('🛠 Creating demo technician...');
     const tech = this.techniciansRepo.create({
-      name: 'Técnico Demo',
-      specialty: 'Soporte general',
+      name: 'Demo Technician',
+      specialty: 'General support',
       availability: true,
     });
     await this.techniciansRepo.save(tech);
